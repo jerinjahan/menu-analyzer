@@ -17,6 +17,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import NetworkChecking from '../components/networkChecking';
 import Loader from '../components/Loader';
 import InputDatePicker from '../components/DatePicker';
+import statusList from '../assets/data/status.json';
 
 /** network check */
 import NetInfo from '@react-native-community/netinfo';
@@ -35,12 +36,14 @@ const UserAnalyzerScreen = ({ navigation }) => {
 
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
-    const statusList = ['Active', 'Super Active', 'Bored'];
+    const [checkedIds, setCheckedIds] = useState([]);
 
+    const [active, setActive] = useState(false);
+    const [superActive, setSuperActive] = useState(false);
+    const [bored, setBored] = useState(false);
 
     useEffect(() => {
         const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
-            console.log('state = ', state.isConnected);
             const offline = !(state.isConnected && state.isInternetReachable);
             setOfflineStatus(offline);
             if (!offline) {
@@ -82,7 +85,6 @@ const UserAnalyzerScreen = ({ navigation }) => {
                             }}>
                                 Select filters to generate report
                             </Text>
-
 
                             <View style={styles.searchContainer}>
                                 <Text style={{ ...FONTS.headerLine6, color: COLORS.theme, borderBottomColor: COLORS.gray, borderBottomWidth: 1, paddingBottom: 5, marginBottom: 10 }}>Date</Text>
@@ -140,15 +142,56 @@ const UserAnalyzerScreen = ({ navigation }) => {
                                 <View style={styles.checkBoxWrapper}>
                                     {
                                         statusList.map((item, index) => (
-                                            <View key={index} style={{ flexDirection: 'row' }}>
-                                                <MaterialIcons name="check-box" size={20} color={COLORS.theme} />
-                                                <Text style={{ color: COLORS.gray, marginLeft: 5 }}>{item}</Text>
+                                            <View key={index} style={{ flexDirection: 'row' ,paddingVertical:5}} 
+                                                onStartShouldSetResponder={() => {
+                                                    // let checkedId = checkedIds;
+                                                    // if(checkedIds.indexOf(item.id) > -1){
+                                                    //     let findIndex = checkedIds.findIndex(m => m == item.id);
+                                                    //     console.log('findIndex = ',findIndex);
+                                                    //     checkedId.splice(findIndex,1);
+                                                    // }else{
+                                                    //     checkedId.push(item.id);
+                                                    // }
+                                                    // setCheckedIds(checkedId);
+                                                    if(item.id == 1){
+                                                        setActive(!active);
+                                                    }
+                                                    if(item.id == 2){
+                                                        setSuperActive(!superActive);
+                                                    }
+                                                    if(item.id == 3){
+                                                        setBored(!bored);
+                                                    }
+                                                }}
+                                            >
+                                                {/* {checkedIds.indexOf(item.id) > -1 ?( */}
+                                                {(item.id == 1 && active) || (item.id == 2 && superActive) || (item.id == 3 && bored)?(
+                                                    <MaterialIcons name="check-box" size={20} color={COLORS.theme} />
+                                                ):(
+                                                    <MaterialIcons name="check-box-outline-blank" size={20} color={COLORS.theme} />
+                                                )} 
+                                                <Text style={{ color: COLORS.gray, marginLeft: 5 }}>{item.value}</Text>
                                             </View>
                                         ))
                                     }
                                 </View>
 
-                                <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('UserList')}>
+                                <TouchableOpacity 
+                                    style={[styles.buttonWrapper,[fromDate == '' || toDate == '' ? { opacity: 0.4 } : { opacity: 1 }]]} 
+                                    onPress={() => {
+                                        navigation.navigate('UserList',{
+                                            fromDate:fromDate,
+                                            toDate:toDate,
+                                            active:active,
+                                            superActive:superActive,
+                                            bored:bored
+                                        })
+                                    }}
+                                    disabled={
+                                        fromDate == '' ||
+                                        toDate == ''
+                                    }
+                                >
                                     <Text style={{ ...FONTS.button, color: COLORS.white }}>generate</Text>
                                 </TouchableOpacity>
 

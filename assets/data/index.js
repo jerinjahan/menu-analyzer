@@ -19,29 +19,28 @@ import Harold14 from "./36495.json";
 import Harold15 from "./37327.json";
 import Harold16 from "./38639.json";
 
-const object3 = [...Cynthia, ...Brittany ];
-console.log('all profile = ',object3);
+// const object3 = [...Cynthia, ...Brittany ];
+// console.log('all profile = ',object3);
 
 export default  {
-    // Cynthia,
-    // Brittany,
-    // Gomez,
-    // Nicola,
-    // Harold,
-    // Harold2,
-    // Harold3,
-    // Harold4,
-    // Harold5,
-    // Harold6,
-    // Harold7,
-    // Harold8,
-    // Harold9,
-    // Harold10,
-    // Harold11,
-    // Harold12,
-    // Harold13,
-    // Harold14,
-    // Harold15,
-    // Harold16
-    object3
+    Cynthia,
+    Brittany,
+    Gomez,
+    Nicola,
+    Harold,
+    Harold2,
+    Harold3,
+    Harold4,
+    Harold5,
+    Harold6,
+    Harold7,
+    Harold8,
+    Harold9,
+    Harold10,
+    Harold11,
+    Harold12,
+    Harold13,
+    Harold14,
+    Harold15,
+    Harold16
 }

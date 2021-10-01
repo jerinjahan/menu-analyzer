@@ -11,6 +11,7 @@ import {
 import { COLORS, FONTS, SIZES } from '../constants';
 import { MaterialIcons } from '@expo/vector-icons';
 import InputDatePicker from '../components/DatePicker';
+import statusList from '../assets/data/status.json';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -19,14 +20,16 @@ const monthNames = [
     "July", "August", "September", "October", "November", "December"
 ];
 
-const FilterUser = ({ setShowModal }) => {
-
+const FilterUser = ({ setShowModal,starDate, endDate, isActive, isSuperActive, isBored,navigation }) => {
     const [showFromDate, setShowFromDate] = useState(false);
     const [showToDate, setShowToDate] = useState(false);
 
-    const [fromDate, setFromDate] = useState('');
-    const [toDate, setToDate] = useState('');
-    const statusList = ['Active', 'Super Active', 'Bored'];
+    const [fromDate, setFromDate] = useState(starDate);
+    const [toDate, setToDate] = useState(endDate);
+
+    const [active, setActive] = useState(isActive);
+    const [superActive, setSuperActive] = useState(isSuperActive);
+    const [bored, setBored] = useState(isBored);
 
     const showDate = (fromDate) => {
         var d = new Date(fromDate),
@@ -112,15 +115,40 @@ const FilterUser = ({ setShowModal }) => {
                         <View style={styles.checkBoxWrapper}>
                             {
                                 statusList.map((item, index) => (
-                                    <View key={index} style={{ flexDirection: 'row' }}>
-                                        <MaterialIcons name="check-box" size={20} color={COLORS.theme} />
-                                        <Text style={{ color: COLORS.gray, marginLeft: 5 }}>{item}</Text>
+                                    <View key={index} style={{ flexDirection: 'row', paddingVertical: 5 }}
+                                        onStartShouldSetResponder={() => {
+                                            if (item.id == 1) {
+                                                setActive(!active);
+                                            }
+                                            if (item.id == 2) {
+                                                setSuperActive(!superActive);
+                                            }
+                                            if (item.id == 3) {
+                                                setBored(!bored);
+                                            }
+                                        }}
+                                    >
+                                        {(item.id == 1 && active) || (item.id == 2 && superActive) || (item.id == 3 && bored) ? (
+                                            <MaterialIcons name="check-box" size={20} color={COLORS.theme} />
+                                        ) : (
+                                            <MaterialIcons name="check-box-outline-blank" size={20} color={COLORS.theme} />
+                                        )}
+                                        <Text style={{ color: COLORS.gray, marginLeft: 5 }}>{item.value}</Text>
                                     </View>
                                 ))
                             }
                         </View>
 
-                        <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('UserList')}>
+                        <TouchableOpacity style={styles.buttonWrapper} onPress={() => {
+                            // navigation.navigate('UserList',{
+                            //     fromDate:fromDate,
+                            //     toDate:toDate,
+                            //     active:active,
+                            //     superActive:superActive,
+                            //     bored:bored
+                            // })
+                            setShowModal(false)
+                        }}>
                             <Text style={{ ...FONTS.button, color: COLORS.white }}>generate</Text>
                         </TouchableOpacity>
 
