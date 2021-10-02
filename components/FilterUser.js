@@ -20,16 +20,37 @@ const monthNames = [
     "July", "August", "September", "October", "November", "December"
 ];
 
-const FilterUser = ({ setShowModal,starDate, endDate, isActive, isSuperActive, isBored,navigation }) => {
+
+/** redux */
+import { connect, useSelector } from 'react-redux';
+import { addTodo} from '../redux/action';
+
+const FilterUser = ({ 
+    setShowModal,
+    // fromDate, 
+    // toDate,
+    // active,
+    // superActive,
+    // bored,
+    // setFromDate,
+    // setToDate,
+    // setActive,
+    // setSuperActive,
+    // setBored,
+    addTodo
+}) => {
+    const { filterOptions } = useSelector(state => state.usersReducer);
+    console.log('in filter modal = ',filterOptions);
+
     const [showFromDate, setShowFromDate] = useState(false);
     const [showToDate, setShowToDate] = useState(false);
 
-    const [fromDate, setFromDate] = useState(starDate);
-    const [toDate, setToDate] = useState(endDate);
+    const [fromDate, setFromDate] = useState(filterOptions.fromDate);
+    const [toDate, setToDate] = useState(filterOptions.toDate);
 
-    const [active, setActive] = useState(isActive);
-    const [superActive, setSuperActive] = useState(isSuperActive);
-    const [bored, setBored] = useState(isBored);
+    const [active, setActive] = useState(filterOptions.active);
+    const [superActive, setSuperActive] = useState(filterOptions.superActive);
+    const [bored, setBored] = useState(filterOptions.bored);
 
     const showDate = (fromDate) => {
         var d = new Date(fromDate),
@@ -40,6 +61,18 @@ const FilterUser = ({ setShowModal,starDate, endDate, isActive, isSuperActive, i
             day = '0' + day;
 
         return [day, month, year].join(' ');
+    }
+
+    const handleFilters = () => {
+        let passData = {
+            fromDate: fromDate,
+            toDate: toDate,
+            active: active,
+            superActive: superActive,
+            bored: bored
+        };
+        addTodo(passData);
+        setShowModal(false)
     }
 
     return (
@@ -139,16 +172,7 @@ const FilterUser = ({ setShowModal,starDate, endDate, isActive, isSuperActive, i
                             }
                         </View>
 
-                        <TouchableOpacity style={styles.buttonWrapper} onPress={() => {
-                            // navigation.navigate('UserList',{
-                            //     fromDate:fromDate,
-                            //     toDate:toDate,
-                            //     active:active,
-                            //     superActive:superActive,
-                            //     bored:bored
-                            // })
-                            setShowModal(false)
-                        }}>
+                        <TouchableOpacity style={styles.buttonWrapper} onPress={() => handleFilters()}>
                             <Text style={{ ...FONTS.button, color: COLORS.white }}>generate</Text>
                         </TouchableOpacity>
 
@@ -215,4 +239,15 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FilterUser;
+const mapStateToProps = (state, ownProps) => {
+    return {
+        user_lists: state.usersReducer.user_lists,
+    }
+}
+
+const mapDispatchToProps = { addTodo}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(FilterUser)

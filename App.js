@@ -4,12 +4,16 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 import {
     UserAnalyzerScreen,
     UserListScreen,
+
 } from './screens';
 
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { FONTS, COLORS } from './constants';
 import { AntDesign } from '@expo/vector-icons';
+
+import store from './redux/store';
+import { Provider } from 'react-redux';
 
 export default function App() {
     const Stack = createStackNavigator();
@@ -29,10 +33,10 @@ export default function App() {
             borderWidth: 0
         }
         headerLeft = () => (
-            <TouchableOpacity onPress={() => { navigation.goBack() }} style={{paddingHorizontal:10}}>
+            <TouchableOpacity onPress={() => { navigation.goBack() }} style={{ paddingHorizontal: 10 }}>
                 <AntDesign
                     name="arrowleft"
-                    size={32} 
+                    size={32}
                     color={COLORS.white}
                 />
             </TouchableOpacity>
@@ -65,9 +69,12 @@ export default function App() {
     return (
         <>
             <StatusBar backgroundColor={'transparent'} translucent />
-            <NavigationContainer>
-                <AppStackNavigator />
-            </NavigationContainer>
+            <Provider store={store}>
+                <NavigationContainer>
+                    <AppStackNavigator />
+                </NavigationContainer>
+            </Provider>
+
         </>
 
     );

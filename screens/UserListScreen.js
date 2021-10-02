@@ -26,16 +26,23 @@ import Loader from '../components/Loader';
 import NetInfo from '@react-native-community/netinfo';
 import * as combinedJson from '../assets/data/index.js';
 
+/** redux */
+import { connect, useSelector, useDispatch } from 'react-redux';
+import { updateFilter, getUsers, filterByName } from '../redux/action';
+
 const calcSize = (size) => size
 const { height, width } = Dimensions.get('window');
 
 const UserListScreen = ({ navigation, route }) => {
-    // console.log('route = ', route.params);
-    const { fromDate, toDate, active, superActive, bored } = route.params;
+    const { filterOptions,users_list } = useSelector(state => state.usersReducer);
+
+    const [fromDate, setFromDate] = useState(route.params?.fromDate);
+    const [toDate, setToDate] = useState(route.params?.toDate);
+
     const [isOffline, setOfflineStatus] = useState(false);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [userList, setUserList] = useState([]);
+
     const [filteredData, setFilteredData] = useState([]);
     const [searchItem, setSearchItem] = useState('');
     const [allDates, setAllDates] = useState([]);
@@ -47,7 +54,6 @@ const UserListScreen = ({ navigation, route }) => {
             if (!offline) {
                 prepareData();
                 const willFocusSubscription = navigation.addListener('focus', () => {
-                    console.log('on focus');
                     setLoading(true);
                     prepareData();
                 });
@@ -55,178 +61,15 @@ const UserListScreen = ({ navigation, route }) => {
             }
         });
         return () => removeNetInfoSubscription();
-    }, []);
+    }, [showModal]);
 
     const prepareData = () => {
-        let startDate = moment(fromDate).format("YYYY-MM-DD");
-        let endDate = moment(toDate).format("YYYY-MM-DD");
+        let startDate = moment(filterOptions.fromDate).format("YYYY-MM-DD");
+        let endDate = moment(filterOptions.toDate).format("YYYY-MM-DD");
         let daylist = getDaysArray(startDate, endDate);
 
         setAllDates(daylist);
-
-        let allUserProfile = [];
-        allUserProfile.push({
-            name: combinedJson.default.Cynthia.profile.name,
-            pictureUrl: combinedJson.default.Cynthia.profile.pictureUrl,
-            // userId: combinedJson.default.Cynthia.profile,
-            // dateToDayId: combinedJson.default.Cynthia['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Cynthia['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Brittany.profile.name,
-            pictureUrl: combinedJson.default.Brittany.profile.pictureUrl,
-            // userId: combinedJson.default.Brittany.profile,
-            // dateToDayId: combinedJson.default.Brittany['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Brittany['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Gomez.profile.name,
-            pictureUrl: combinedJson.default.Gomez.profile.pictureUrl,
-            // userId: combinedJson.default.Gomez.profile,
-            // dateToDayId: combinedJson.default.Gomez['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Gomez['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold.profile.name,
-            pictureUrl: combinedJson.default.Harold.profile.pictureUrl,
-            // userId: combinedJson.default.Harold.profile,
-            // dateToDayId: combinedJson.default.Harold['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold2.profile.name,
-            pictureUrl: combinedJson.default.Harold2.profile.pictureUrl,
-            // userId: combinedJson.default.Harold2.profile,
-            // dateToDayId: combinedJson.default.Harold2['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold2['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold3.profile.name,
-            pictureUrl: combinedJson.default.Harold3.profile.pictureUrl,
-            // userId: combinedJson.default.Harold3.profile,
-            // dateToDayId: combinedJson.default.Harold3['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold3['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold4.profile.name,
-            pictureUrl: combinedJson.default.Harold4.profile.pictureUrl,
-            // userId: combinedJson.default.Harold4.profile,
-            // dateToDayId: combinedJson.default.Harold4['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold4['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold5.profile.name,
-            pictureUrl: combinedJson.default.Harold5.profile.pictureUrl,
-            // userId: combinedJson.default.Harold5.profile,
-            // dateToDayId: combinedJson.default.Harold5['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold5['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold6.profile.name,
-            pictureUrl: combinedJson.default.Harold6.profile.pictureUrl,
-            // userId: combinedJson.default.Harold6.profile,
-            // dateToDayId: combinedJson.default.Harold6['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold6['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold7.profile.name,
-            pictureUrl: combinedJson.default.Harold7.profile.pictureUrl,
-            // userId: combinedJson.default.Harold7.profile,
-            // dateToDayId: combinedJson.default.Harold7['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold7['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold.profile.name,
-            pictureUrl: combinedJson.default.Harold.profile.pictureUrl,
-            // userId: combinedJson.default.Harold.profile,
-            // dateToDayId: combinedJson.default.Harold['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold8.profile.name,
-            pictureUrl: combinedJson.default.Harold8.profile.pictureUrl,
-            // userId: combinedJson.default.Harold8.profile,
-            // dateToDayId: combinedJson.default.Harold8['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold8['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold9.profile.name,
-            pictureUrl: combinedJson.default.Harold9.profile.pictureUrl,
-            // userId: combinedJson.default.Harold9.profile,
-            // dateToDayId: combinedJson.default.Harold9['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold9['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold10.profile.name,
-            pictureUrl: combinedJson.default.Harold10.profile.pictureUrl,
-            // userId: combinedJson.default.Harold10.profile,
-            // dateToDayId: combinedJson.default.Harold10['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold10['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold11.profile.name,
-            pictureUrl: combinedJson.default.Harold11.profile.pictureUrl,
-            // userId: combinedJson.default.Harold11.profile,
-            // dateToDayId: combinedJson.default.Harold11['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold11['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold12.profile.name,
-            pictureUrl: combinedJson.default.Harold12.profile.pictureUrl,
-            // userId: combinedJson.default.Harold12.profile,
-            // dateToDayId: combinedJson.default.Harold12['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold12['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold13.profile.name,
-            pictureUrl: combinedJson.default.Harold13.profile.pictureUrl,
-            // userId: combinedJson.default.Harold13.profile,
-            // dateToDayId: combinedJson.default.Harold13['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold13['calendar']['mealIdToDayId']
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold14.profile.name,
-            pictureUrl: combinedJson.default.Harold14.profile.pictureUrl,
-            // userId: combinedJson.default.Harold14.profile,
-            // dateToDayId: combinedJson.default.Harold14['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold14['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold15.profile.name,
-            pictureUrl: combinedJson.default.Harold15.profile.pictureUrl,
-            // userId: combinedJson.default.Harold15.profile,
-            // dateToDayId: combinedJson.default.Harold15['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold15['calendar']['mealIdToDayId']
-            count: 0
-        });
-        allUserProfile.push({
-            name: combinedJson.default.Harold16.profile.name,
-            pictureUrl: combinedJson.default.Harold16.profile.pictureUrl,
-            // userId: combinedJson.default.Harold16.profile,
-            // dateToDayId: combinedJson.default.Harold16['calendar']['dateToDayId'],
-            // mealIdToDayId: combinedJson.default.Harold16['calendar']['mealIdToDayId'],
-            count: 0
-        });
-        setUserList(allUserProfile);
-        filterMealCount(daylist, allUserProfile);
+        filterMealCount(daylist, users_list);
         setLoading(false);
     }
 
@@ -398,15 +241,15 @@ const UserListScreen = ({ navigation, route }) => {
             setFilteredData(allUserProfile);
         }
         let filterBasedOnStatus = allUserProfile.filter(m => {
-            if (superActive && m.count > 10 ) {
+            if (filterOptions.superActive && m.count > 10) {
                 return m;
-            }else if (active && m.count >= 4){
+            } else if (filterOptions.active && m.count >= 4) {
                 return m;
-            }else if (bored && m.count < 4){
+            } else if (filterOptions.bored && m.count < 4) {
                 return m;
             }
             else {
-                return false ;
+                return false;
             }
         });
         setFilteredData(filterBasedOnStatus);
@@ -414,16 +257,12 @@ const UserListScreen = ({ navigation, route }) => {
 
     const searchData = (text) => {
         if (text) {
-            // let filteredData = allFeaturedJobLists.filter((item) => item.locationDistrict.toLowerCase().includes(text.toLowerCase()));
-            // setFeaturedJobLists(filteredData);
-            console.log('in if serach com = ', text);
+            let filteredData = users_list.filter((item) => item.name.toLowerCase().includes(text.toLowerCase()));
+            setFilteredData(filteredData);
         } else {
-            // setFeaturedJobLists(allFeaturedJobLists);
-            // console.log('in else serach com = ', allFeaturedJobLists.length);
-            // setSelectedLocation('');
+            setFilteredData(users_list);
         }
-        // setSearchItem(text);
-        // setSelectedLocation(text);
+        setSearchItem(text);
     };
     const renderItem = ({ item }) => (
         <View style={styles.userDetailsWrapper}>
@@ -431,7 +270,7 @@ const UserListScreen = ({ navigation, route }) => {
                 <Image resizeMode='contain' resizeMethod='resize' source={{ uri: item.pictureUrl }} style={styles.image} />
             </View>
             <View style={styles.textContainer}>
-                <Text style={{ ...FONTS.subtitle2, color: COLORS.gray }}>{item.name} -- {item.count}</Text>
+                <Text style={{ ...FONTS.subtitle2, color: COLORS.gray }}>{item.name}</Text>
             </View>
             <View style={{
                 position: 'absolute',
@@ -459,14 +298,8 @@ const UserListScreen = ({ navigation, route }) => {
                     {loading ? (<Loader />) : (
                         <>
                             {showModal && (
-                                <FilterUser 
-                                    setShowModal={setShowModal} 
-                                    starDate={fromDate} 
-                                    endDate={toDate} 
-                                    isActive={active} 
-                                    isSuperActive={superActive} 
-                                    isBored={bored} 
-                                    navigation={navigation} 
+                                <FilterUser
+                                    setShowModal={setShowModal}
                                 />
                             )}
                             <View
@@ -525,7 +358,18 @@ const UserListScreen = ({ navigation, route }) => {
     );
 };
 
-export default UserListScreen;
+const mapStateToProps = (state, ownProps) => {
+    return {
+        todo_list: state.usersReducer.todo_list,
+    }
+}
+
+const mapDispatchToProps = { filterByName}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(UserListScreen)
 
 const styles = StyleSheet.create({
     container: {

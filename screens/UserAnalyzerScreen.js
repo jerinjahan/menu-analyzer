@@ -9,6 +9,8 @@ import {
     Text,
     KeyboardAvoidingView,
     SafeAreaView,
+    Button,
+    FlatList
 } from 'react-native';
 import { COLORS, FONTS } from '../constants';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -22,25 +24,30 @@ import statusList from '../assets/data/status.json';
 /** network check */
 import NetInfo from '@react-native-community/netinfo';
 
+/** redux */
+import { connect, useSelector, useDispatch } from 'react-redux';
+import { updateFilter, addTodo, deleteTodo,getUsers, filterByName } from '../redux/action';
+
 const calcSize = (size) => size
 const monthNames = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
 ];
 
-const UserAnalyzerScreen = ({ navigation }) => {
+const UserAnalyzerScreen = ({ updateFilter, addTodo, deleteTodo,navigation }) => {
+    const { filterOptions,todo_list } = useSelector(state => state.usersReducer);
     const [isOffline, setOfflineStatus] = useState(false);
     const [loading, setLoading] = useState(false);
     const [showFromDate, setShowFromDate] = useState(false);
     const [showToDate, setShowToDate] = useState(false);
 
-    const [fromDate, setFromDate] = useState('');
-    const [toDate, setToDate] = useState('');
+    const [fromDate, setFromDate] = useState(filterOptions.fromDate);
+    const [toDate, setToDate] = useState(filterOptions.toDate);
     const [checkedIds, setCheckedIds] = useState([]);
 
-    const [active, setActive] = useState(false);
-    const [superActive, setSuperActive] = useState(false);
-    const [bored, setBored] = useState(false);
+    const [active, setActive] = useState(filterOptions.active);
+    const [superActive, setSuperActive] = useState(filterOptions.superActive);
+    const [bored, setBored] = useState(filterOptions.bored);
 
     useEffect(() => {
         const removeNetInfoSubscription = NetInfo.addEventListener((state) => {
@@ -48,6 +55,8 @@ const UserAnalyzerScreen = ({ navigation }) => {
             setOfflineStatus(offline);
             if (!offline) {
                 setLoading(false);
+                // fetchBooks();
+                // console.log('data = ',fetchData());
             }
         });
         return () => removeNetInfoSubscription();
@@ -61,8 +70,21 @@ const UserAnalyzerScreen = ({ navigation }) => {
         if (day.length < 2)
             day = '0' + day;
 
-        return [day , month , year].join(' ');
+        return [day, month, year].join(' ');
     }
+
+    const handleFilters = () => {
+        let passData = {
+            fromDate: fromDate,
+            toDate: toDate,
+            active: active,
+            superActive: superActive,
+            bored: bored
+        };
+        navigation.navigate('UserList')
+        addTodo(passData);
+    }
+
     return (
         <View style={styles.container}>
             {isOffline ? (<NetworkChecking />) : (
@@ -104,7 +126,7 @@ const UserAnalyzerScreen = ({ navigation }) => {
                                         style={styles.inputStyle}
                                         onPress={() => setShowFromDate(true)}
                                     >
-                                        <Text style={{color:fromDate?COLORS.black:COLORS.inputPlaceholderColor}}>{fromDate?showDate(fromDate):'1 July 2021'}</Text>
+                                        <Text style={{ color: fromDate ? COLORS.black : COLORS.inputPlaceholderColor }}>{fromDate ? showDate(fromDate) : '1 July 2021'}</Text>
                                     </TouchableOpacity>
                                 </View>
 
@@ -123,7 +145,7 @@ const UserAnalyzerScreen = ({ navigation }) => {
                                         style={styles.inputStyle}
                                         onPress={() => setShowToDate(true)}
                                     >
-                                        <Text style={{color:toDate?COLORS.black:COLORS.inputPlaceholderColor}}>{toDate?showDate(toDate):'1 July 2021'}</Text>
+                                        <Text style={{ color: toDate ? COLORS.black : COLORS.inputPlaceholderColor }}>{toDate ? showDate(toDate) : '1 July 2021'}</Text>
                                     </TouchableOpacity>
 
                                 </View>
@@ -142,7 +164,7 @@ const UserAnalyzerScreen = ({ navigation }) => {
                                 <View style={styles.checkBoxWrapper}>
                                     {
                                         statusList.map((item, index) => (
-                                            <View key={index} style={{ flexDirection: 'row' ,paddingVertical:5}} 
+                                            <View key={index} style={{ flexDirection: 'row', paddingVertical: 5 }}
                                                 onStartShouldSetResponder={() => {
                                                     // let checkedId = checkedIds;
                                                     // if(checkedIds.indexOf(item.id) > -1){
@@ -153,40 +175,32 @@ const UserAnalyzerScreen = ({ navigation }) => {
                                                     //     checkedId.push(item.id);
                                                     // }
                                                     // setCheckedIds(checkedId);
-                                                    if(item.id == 1){
+                                                    if (item.id == 1) {
                                                         setActive(!active);
                                                     }
-                                                    if(item.id == 2){
+                                                    if (item.id == 2) {
                                                         setSuperActive(!superActive);
                                                     }
-                                                    if(item.id == 3){
+                                                    if (item.id == 3) {
                                                         setBored(!bored);
                                                     }
                                                 }}
                                             >
                                                 {/* {checkedIds.indexOf(item.id) > -1 ?( */}
-                                                {(item.id == 1 && active) || (item.id == 2 && superActive) || (item.id == 3 && bored)?(
+                                                {(item.id == 1 && active) || (item.id == 2 && superActive) || (item.id == 3 && bored) ? (
                                                     <MaterialIcons name="check-box" size={20} color={COLORS.theme} />
-                                                ):(
+                                                ) : (
                                                     <MaterialIcons name="check-box-outline-blank" size={20} color={COLORS.theme} />
-                                                )} 
+                                                )}
                                                 <Text style={{ color: COLORS.gray, marginLeft: 5 }}>{item.value}</Text>
                                             </View>
                                         ))
                                     }
                                 </View>
 
-                                <TouchableOpacity 
-                                    style={[styles.buttonWrapper,[fromDate == '' || toDate == '' ? { opacity: 0.4 } : { opacity: 1 }]]} 
-                                    onPress={() => {
-                                        navigation.navigate('UserList',{
-                                            fromDate:fromDate,
-                                            toDate:toDate,
-                                            active:active,
-                                            superActive:superActive,
-                                            bored:bored
-                                        })
-                                    }}
+                                <TouchableOpacity
+                                    style={[styles.buttonWrapper, [fromDate == '' || toDate == '' ? { opacity: 0.4 } : { opacity: 1 }]]}
+                                    onPress={handleFilters}
                                     disabled={
                                         fromDate == '' ||
                                         toDate == ''
@@ -204,7 +218,18 @@ const UserAnalyzerScreen = ({ navigation }) => {
     );
 };
 
-export default UserAnalyzerScreen;
+const mapStateToProps = (state, ownProps) => {
+    return {
+        todo_list: state.usersReducer.todo_list,
+    }
+}
+
+const mapDispatchToProps = { addTodo, deleteTodo,updateFilter }
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(UserAnalyzerScreen)
 
 const styles = StyleSheet.create({
     container: {
