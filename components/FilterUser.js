@@ -6,7 +6,8 @@ import {
     KeyboardAvoidingView,
     Modal,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity,
+    Platform
 } from 'react-native';
 import { COLORS, FONTS, SIZES } from '../constants';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -27,16 +28,6 @@ import { addTodo} from '../redux/action';
 
 const FilterUser = ({ 
     setShowModal,
-    // fromDate, 
-    // toDate,
-    // active,
-    // superActive,
-    // bored,
-    // setFromDate,
-    // setToDate,
-    // setActive,
-    // setSuperActive,
-    // setBored,
     addTodo
 }) => {
     const { filterOptions } = useSelector(state => state.usersReducer);
