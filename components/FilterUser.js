@@ -192,9 +192,6 @@ const styles = StyleSheet.create({
         width: WIDTH,
         height: "100%"
     },
-    loader: {
-        padding: 10,
-    },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',

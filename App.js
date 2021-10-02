@@ -32,7 +32,7 @@ export default function App() {
             marginLeft: -16,
             borderWidth: 0
         }
-        headerLeft = () => (
+        const headerLeft = () => (
             <TouchableOpacity onPress={() => { navigation.goBack() }} style={{ paddingHorizontal: 10 }}>
                 <AntDesign
                     name="arrowleft"
@@ -79,12 +79,3 @@ export default function App() {
 
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});

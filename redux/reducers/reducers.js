@@ -125,10 +125,8 @@ const initialState = {
 };
 
 export default function (state = initialState, action) {
-    console.log('action.payload = ', action.payload);
     switch (action.type) {
         case ADD_TODO: {
-            console.log('\n\n\n\n action.payload = ', action.payload);
             const { id, task } = action.payload
             return {
                 ...state,

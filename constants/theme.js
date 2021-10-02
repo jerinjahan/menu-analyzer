@@ -10,9 +10,7 @@ export const COLORS = {
     error: "#FFD300",
 
     // colors
-    black: "#1E1F20",
     white: "#FFFFFF",
-
     theme: '#1490A6',
     black: '#010A03',
     gray: '#8D8D8D',
@@ -23,10 +21,6 @@ export const COLORS = {
     inuputBackground : '#FAFAFA',
     inputColor : '#CBCBCB',
     inputPlaceholderColor : 'rgba(1, 10, 3, 0.4)',
-    inputSuccessBorder : '1px solid #00D42A',
-    inputSuccesseBoxShadow : '0px 0px 3px 1px rgba(0, 212, 42, 0.2)',
-    inputErrorBorder : '1px solid #FE2D3F',
-    inputErrorBoxShadow : '0px 0px 3px 1px rgba(217, 0, 0, 0.2)',
     inputSuccessBorder : '1px solid #00D42A',
     inputSuccesseBoxShadow : '0px 0px 3px 1px rgba(0, 212, 42, 0.2)',
     inputErrorBorder : '1px solid #FE2D3F',
